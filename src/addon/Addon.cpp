@@ -1,5 +1,6 @@
 #include "addon/Addon.hpp"
 #include "imgui/imgui.h"
+#include "cpr/cpr.h"
 
 std::filesystem::path Addon::AddonPath;
 std::filesystem::path Addon::SettingsPath;
@@ -17,8 +18,8 @@ void Addon::load(AddonAPI *aApi) {
     APIDefs->RegisterRender(ERenderType_Render, Addon::render);
     APIDefs->RegisterRender(ERenderType_OptionsRender, Addon::render_options);
 
-    AddonPath = APIDefs->GetAddonDirectory(m_addon_name.c_str());
-    SettingsPath = APIDefs->GetAddonDirectory((m_addon_name + "/settings.json").c_str());
+    AddonPath = APIDefs->GetAddonDirectory(m_addon_name.data());
+    SettingsPath = APIDefs->GetAddonDirectory((std::string(m_addon_name.data()) + "/settings.json").c_str());
     std::filesystem::create_directory(AddonPath);
 }
 
@@ -31,8 +32,12 @@ void Addon::unload() {
 
 void Addon::render() {
     ImGui::PushFont(static_cast<ImFont *>(NexusLink->Font));
-    if (ImGui::Begin(m_addon_name.c_str(), nullptr, 0)) {
+    if (ImGui::Begin(m_addon_name.data(), nullptr, 0)) {
         //TODO: heres the main stuff
+        if (ImGui::Button("test api")) {
+            cpr::Response r = cpr::Get(cpr::Url{"https://api.guildwars2.com/v2/achievements"});
+            APIDefs->Log(ELogLevel_DEBUG, "test_api", r.text.c_str());
+        }
     }
     ImGui::PopFont();
     ImGui::End();

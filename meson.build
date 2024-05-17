@@ -6,9 +6,11 @@ subdir('src')
 include_dir = include_directories('include')
 
 ## Import Imgui
-imgui_include_dirs = include_directories('include')
-imgui_sources = files('src/imgui/imgui.cpp', 'src/imgui/imgui_draw.cpp', 'src/imgui/imgui_tables.cpp', 'src/imgui/imgui_widgets.cpp', 'src/imgui/imgui_demo.cpp')
-imgui_lib = static_library('imgui', imgui_sources, include_directories: imgui_include_dirs)
-imgui_dep = declare_dependency(link_with: imgui_lib, include_directories: imgui_include_dirs)
+#imgui_include_dirs = include_directories('include')
+#imgui_sources = files('src/imgui/imgui.cpp', 'src/imgui/imgui_draw.cpp', 'src/imgui/imgui_tables.cpp', 'src/imgui/imgui_widgets.cpp', 'src/imgui/imgui_demo.cpp')
+#imgui_lib = static_library('imgui', imgui_sources, include_directories: imgui_include_dirs)
+#imgui_dep = declare_dependency(link_with: imgui_lib, include_directories: imgui_include_dirs)
+imgui = subproject('imgui')
+cpr = subproject('cpr')
 
-nexus_template = library('nexus_template', sources, include_directories : include_dir, dependencies: [imgui_dep])
+nexus_template = shared_library('nexus_template', sources, include_directories : include_dir, dependencies: [imgui.get_variable('imgui_dep'), cpr.get_variable('cpr_dep')])
